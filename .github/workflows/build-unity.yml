@@ -1,0 +1,66 @@
+name: CI
+
+env:
+  UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+  GIT_LFS_SKIP_SMUDGE: 1
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    name: Build my project
+    runs-on: ubuntu-latest
+    steps:
+        # Checkout 
+        - name: Checkout repository
+          uses: actions/checkout@v2
+          with:
+            lfs: true
+
+        # Cache
+        - uses: actions/cache@v2
+          with:
+            path: Library
+            key: Library
+
+        # Test
+        #- name: Unity - Test runner
+        #  uses: game-ci/unity-test-runner@v2
+        #  env:
+        #    UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        #  with:
+        #    unityVersion: 2020.2.2f1
+            
+        # Build
+        - name: Unity - Builder
+          uses: game-ci/unity-builder@v2
+          env:
+            UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          with:
+            unityVersion: 2020.2.2f1
+            targetPlatform: StandaloneWindows64
+            allowDirtyBuild: true
+
+        # Form package
+        - name: Form package
+          shell: bash
+          run: |
+            mkdir ./MadCrewPackage && \
+            cp build/StandaloneWindows64/StandaloneWindows64_Data/Managed/MadCrew.VR.dll ./MadCrewPackage && \
+            cp ./Assets/MadCrew.VR/package.json ./MadCrewPackage && \
+            cp ./Assets/MadCrew.VR/CHANGELOG.md ./MadCrewPackage
+
+        # Publish package
+        - uses: ./.github/actions/actions-gpr-publish
+          with:
+            npm_registry_url: ${{ secrets.NPM_REGISTRY_URL }}
+            npm_auth_token: ${{ secrets.GITHUB_TOKEN }}
+            package_directory_path: MadCrewPackage
+
+        # Output
+        - uses: actions/upload-artifact@v2
+          with:
+            name: Build
+            path: build

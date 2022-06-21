@@ -1,0 +1,114 @@
+name: Deploy to Beta
+
+env:
+  UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+
+on: 
+  workflow_dispatch:
+    inputs:
+      deploy_to_beta:
+        description: 'Deploy to Beta'
+        required: false
+
+jobs:
+  build:
+    name: Build and deploy to beta
+    runs-on: ubuntu-latest
+    steps:
+        # Checkout 
+        - name: 'Checkout code'
+          uses: actions/checkout@v2
+          with:
+            ref: beta
+
+        - name: 'Create Git LFS lockfile'
+          run: git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
+
+        - name: 'Set up Git LFS cache'
+          uses: actions/cache@v2
+          with:
+            path: .git/lfs
+            key: lfs-${{ hashFiles('.lfs-assets-id') }}
+
+        - name: 'Git LFS pull'
+          run: git lfs pull
+
+        #- name: Delete lfs files
+        #  shell: bash
+        #  run: |
+        #    echo "Before" && \
+        #    ls ./Assets/Thirdparty/ && \
+        #    rm ./Assets/Thirdparty/*.TGA && \
+        #    rm ./Assets/Thirdparty/*.TGA.meta && \
+        #    echo "After"
+        #    ls ./Assets/Thirdparty/
+        
+        # Cache
+        #- uses: actions/cache@v1.1.0
+        #  with:
+        #    path: ./Library
+        #    key: Library-unity-ci-WebGL
+        #    restore-keys: |
+        #      Library-unity-ci-
+        #      Library-
+            
+        # Test
+        #- name: Unity - Test runner
+        #  uses: game-ci/unity-test-runner@v2.0-alpha-2
+        #  env:
+        #    UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        #  with:
+        #    unityVersion: 2020.2.2f1
+        
+        # Cleanup
+        - name: "Freeing up disk space for build"
+          run: |
+            echo "############################################"
+            echo "#    Freeing up disk space on CI system    #"
+            echo "############################################"
+            echo -n "Disk space before:"
+            df -h / --output=avail | tail -1
+            # https://github.com/apache/flink/blob/master/tools/azure-pipelines/free_disk_space.sh
+            rm -rf /usr/share/dotnet/
+            # https://github.com/actions/virtual-environments/issues/709#issuecomment-612569242
+            rm -rf "/usr/local/share/boost"
+            rm -rf "$AGENT_TOOLSDIRECTORY"
+            echo -n "Disk space after:"
+            df -h / --output=avail | tail -1
+        
+        # Build
+        - name: Unity - Builder
+          uses: game-ci/unity-builder@v2.0-alpha-6
+          env:
+            UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          with:
+            unityVersion: 2020.2.2f1
+            targetPlatform: StandaloneWindows64
+            buildMethod: BuildAddressablesProcessor.PreExport
+            allowDirtyBuild: true
+        
+        # Setup steamcmd
+        - name: Setup steamcmd
+          uses: CyberAndrii/setup-steamcmd@v1.1.1
+
+        # Deploy to steam
+        - name: Deploy to steam
+          uses: game-ci/steam-deploy@v1
+          with:
+            username: ${{ secrets.STEAM_USERNAME }}
+            password: ${{ secrets.STEAM_PASSWORD }}
+            configVdf: ${{ secrets.STEAM_CONFIG_VDF}}
+            ssfnFileName: ${{ secrets.STEAM_SSFN_FILE_NAME }}
+            ssfnFileContents: ${{ secrets.STEAM_SSFN_FILE_CONTENTS }}
+            appId: 1751270
+        #    buildDescription: v1.2.3
+            rootPath: build
+            depot1Path: StandaloneWindows64
+            releaseBranch: test
+
+        # Output
+        - name: Upload artifact
+          uses: actions/upload-artifact@v1
+          with:
+            name: Build
+            path: build

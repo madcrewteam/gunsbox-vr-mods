@@ -1,0 +1,105 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 468a46d0ae32c3544b7d98094e6448a9, type: 3}
+  m_Name: AddressableAssetSettings
+  m_EditorClassIdentifier: 
+  m_DefaultGroup: 9dd007c8fa1f2694d935a00614973c10
+  m_OptimizeCatalogSize: 0
+  m_BuildRemoteCatalog: 1
+  m_BundleLocalCatalog: 0
+  m_CatalogRequestsTimeout: 0
+  m_DisableCatalogUpdateOnStart: 0
+  m_IgnoreUnsupportedFilesInBuild: 0
+  m_UniqueBundleIds: 1
+  m_NonRecursiveBuilding: 1
+  m_CCDEnabled: 0
+  m_maxConcurrentWebRequests: 500
+  m_ContiguousBundles: 1
+  m_StripUnityVersionFromBundleBuild: 0
+  m_DisableVisibleSubAssetRepresentations: 0
+  m_ShaderBundleNaming: 0
+  m_ShaderBundleCustomNaming: 
+  m_MonoScriptBundleNaming: 3
+  m_MonoScriptBundleCustomNaming: GunsBox
+  m_RemoteCatalogBuildPath:
+    m_Id: 0353cfcc2a2dd8e42bc20aacbdfb5471
+  m_RemoteCatalogLoadPath:
+    m_Id: 336f3863d4932af4f894d787dfd4f518
+  m_ContentStateBuildPath: 
+  m_BuildAddressablesWithPlayerBuild: 0
+  m_overridePlayerVersion: 
+  m_GroupAssets:
+  - {fileID: 11400000, guid: 042f511924b77dd45809801bcead6c1e, type: 2}
+  - {fileID: 11400000, guid: 1385d942b6734504684c4260119b1235, type: 2}
+  m_BuildSettings:
+    m_CompileScriptsInVirtualMode: 0
+    m_CleanupStreamingAssetsAfterBuilds: 1
+    m_LogResourceManagerExceptions: 1
+    m_BundleBuildPath: Temp/com.unity.addressables/AssetBundles
+  m_ProfileSettings:
+    m_Profiles:
+    - m_InheritedParent: 
+      m_Id: ae78e1869eeeadc4fbdbd0ccf4d8be49
+      m_ProfileName: Default
+      m_Values:
+      - m_Id: dbb55d85f6f492747b7bddfb032f7392
+        m_Value: '[UnityEditor.EditorUserBuildSettings.activeBuildTarget]'
+      - m_Id: 0353cfcc2a2dd8e42bc20aacbdfb5471
+        m_Value: C:/Users/ivan_/AppData/LocalLow/GunsBox Inc/GunsBox VR\Mods\My awesome
+          map for gunsbox vr\StandaloneWindows64
+      - m_Id: 336f3863d4932af4f894d787dfd4f518
+        m_Value: '{UnityEngine.Application.persistentDataPath}/Mods/{LOCAL_FILE_NAME}/StandaloneWindows64'
+      - m_Id: 050f3c3719f742a4295525187b4722d0
+        m_Value: ServerData/[BuildTarget]
+      - m_Id: 2e0686970858bf146b0757870191b3c8
+        m_Value: http://[PrivateIpAddress]:[HostingServicePort]
+    m_ProfileEntryNames:
+    - m_Id: dbb55d85f6f492747b7bddfb032f7392
+      m_Name: BuildTarget
+      m_InlineUsage: 0
+    - m_Id: 0353cfcc2a2dd8e42bc20aacbdfb5471
+      m_Name: Local.BuildPath
+      m_InlineUsage: 0
+    - m_Id: 336f3863d4932af4f894d787dfd4f518
+      m_Name: Local.LoadPath
+      m_InlineUsage: 0
+    - m_Id: 050f3c3719f742a4295525187b4722d0
+      m_Name: Remote.BuildPath
+      m_InlineUsage: 0
+    - m_Id: 2e0686970858bf146b0757870191b3c8
+      m_Name: Remote.LoadPath
+      m_InlineUsage: 0
+    m_ProfileVersion: 1
+  m_LabelTable:
+    m_LabelNames:
+    - default
+    - Map
+    - Preview
+  m_SchemaTemplates: []
+  m_GroupTemplateObjects:
+  - {fileID: 11400000, guid: b591a4946987f304db421176dc440dd5, type: 2}
+  m_InitializationObjects: []
+  m_CertificateHandlerType:
+    m_AssemblyName: 
+    m_ClassName: 
+  m_ActivePlayerDataBuilderIndex: 3
+  m_DataBuilders:
+  - {fileID: 11400000, guid: 86da12c5ad98fc146a7f0d2d7096aad7, type: 2}
+  - {fileID: 11400000, guid: 21f8f325a227f3e4e94f5b88754012f0, type: 2}
+  - {fileID: 11400000, guid: b63603c3f46de15478e060b0caff87c5, type: 2}
+  - {fileID: 11400000, guid: 8e91f153b4a41a342b5a6f240d69fba9, type: 2}
+  m_ActiveProfileId: ae78e1869eeeadc4fbdbd0ccf4d8be49
+  m_HostingServicesManager:
+    m_HostingServiceInfos: []
+    m_Settings: {fileID: 11400000}
+    m_NextInstanceId: 0
+    m_RegisteredServiceTypeRefs: []
