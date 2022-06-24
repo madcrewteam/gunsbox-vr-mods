@@ -47,7 +47,7 @@ public class GunsBoxMapExporter : EditorWindow
         if (!string.IsNullOrEmpty(previewPath))
         {
             previewImage = AssetDatabase.LoadAssetAtPath(previewPath, typeof(Texture2D)) as Texture2D;
-            if (previewImage != null)
+            if (previewImage == null)
             {
                 previewPath = "";
                 EditorPrefs.SetString("preview", "");
@@ -246,7 +246,18 @@ public class GunsBoxMapExporter : EditorWindow
                         return;
 
                     if (previewPath != null)
+                    {
+                        if(string.IsNullOrEmpty(previewPath))
+                        {
+                            if(previewImage != null)
+                            {
+                                previewPath = AssetDatabase.GetAssetPath(previewImage);
+                            }
+
+                            previewImage = AssetDatabase.LoadAssetAtPath(previewPath, typeof(Texture2D)) as Texture2D;
+                        }
                         MapUtils.ImporterSettings(previewPath);
+                    }
 
                     MapUtils.CreateConfig(exportPath, mapName);
                     MapUtils.Build(scenePath, exportPath, previewPath);
