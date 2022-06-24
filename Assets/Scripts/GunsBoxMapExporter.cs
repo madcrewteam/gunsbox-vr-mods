@@ -247,15 +247,6 @@ public class GunsBoxMapExporter : EditorWindow
 
                     if (previewPath != null)
                     {
-                        if(string.IsNullOrEmpty(previewPath))
-                        {
-                            if(previewImage != null)
-                            {
-                                previewPath = AssetDatabase.GetAssetPath(previewImage);
-                            }
-
-                            previewImage = AssetDatabase.LoadAssetAtPath(previewPath, typeof(Texture2D)) as Texture2D;
-                        }
                         MapUtils.ImporterSettings(previewPath);
                     }
 
