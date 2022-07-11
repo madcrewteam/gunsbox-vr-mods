@@ -203,7 +203,7 @@ public class GunsBoxMapExporter : EditorWindow
         //Select Image
         if (screenshotFoldoutBool)
         {
-            EditorGUILayout.HelpBox("Current Icon Path: " + previewPath, MessageType.None);
+            //EditorGUILayout.HelpBox("Current Icon Path: " + previewPath, MessageType.None);
 
             //Screenshot
             EditorGUILayout.HelpBox("Choose a nice angle in the Scene View and press \"Create screenshot for game\"", MessageType.Info);
