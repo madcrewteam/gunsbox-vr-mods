@@ -54,10 +54,10 @@ MonoBehaviour:
       - m_Id: dbb55d85f6f492747b7bddfb032f7392
         m_Value: '[UnityEditor.EditorUserBuildSettings.activeBuildTarget]'
       - m_Id: 0353cfcc2a2dd8e42bc20aacbdfb5471
-        m_Value: C:/Users/ivan_/AppData/LocalLow/GunsBox Inc/GunsBox VR\Mods\Beautiful
-          light\StandaloneWindows64
+        m_Value: C:/Users/ivan_/AppData/LocalLow/GunsBox Inc/GunsBox VR\Mods\Grey
+          box model\StandaloneWindows64
       - m_Id: 336f3863d4932af4f894d787dfd4f518
-        m_Value: '{UnityEngine.Application.persistentDataPath}/Mods/{LOCAL_FILE_NAME}/StandaloneWindows64'
+        m_Value: '{Gunsbox.MapUtils.MapPath}/Grey box model/StandaloneWindows64/'
       - m_Id: 050f3c3719f742a4295525187b4722d0
         m_Value: ServerData/[BuildTarget]
       - m_Id: 2e0686970858bf146b0757870191b3c8

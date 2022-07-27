@@ -1,6 +1,7 @@
 #if UNITY_EDITOR
 using Gunsbox;
 using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -180,7 +181,19 @@ public class GunsBoxMapExporter : EditorWindow
                 selectedObjects = Selection.gameObjects;
 
                 if (selectedObjects.Length > 0)
+                {
+                    Undo.RecordObjects(selectedObjects.ToArray(), "Make teleport areas");
+
+                    foreach (var selectedObject in selectedObjects)
+                    {
+                        if (!selectedObject.name.Contains("[TELEPORT AREA]"))
+                        {
+                            selectedObject.name += " [TELEPORT AREA]";
+                        }
+                    }
+
                     MapUtils.MakeTeleportZone(selectedObjects);
+                }
                 else
                     MapUtils.DisplayError("No selected objects", "Select objects in Hierarchy or Scene View");
             }
@@ -189,7 +202,19 @@ public class GunsBoxMapExporter : EditorWindow
                 selectedObjects = Selection.gameObjects;
 
                 if (selectedObjects.Length > 0)
+                {
+                    Undo.RecordObjects(selectedObjects.ToArray(), "Remove teleport areas");
+
+                    foreach (var selectedObject in selectedObjects)
+                    {
+                        if (selectedObject.name.Contains("[TELEPORT AREA]"))
+                        {
+                            selectedObject.name = selectedObject.name.Replace("[TELEPORT AREA]", "").TrimEnd();
+                        }
+                    }
+
                     MapUtils.RemoveTeleportZone(selectedObjects);
+                }
                 else
                     MapUtils.DisplayError("No selected objects", "Select objects in Hierarchy or Scene View");
             }
@@ -238,7 +263,7 @@ public class GunsBoxMapExporter : EditorWindow
         {
             using (new EditorGUI.DisabledScope(string.IsNullOrEmpty(mapName) || previewImage == null))
             {
-                EditorGUILayout.HelpBox("4. Select \"Build\" to create a map, or \"Build and Run\" to build and run this map in-game for testing purposes.", MessageType.Info);
+                EditorGUILayout.HelpBox("4. Select \"Build\" to create a map. After assembly you can launch the game to view the map in the \"My profile\"", MessageType.Info);
 
                 if (GUILayout.Button("Build", GUILayout.Height(height), GUILayout.Width(position.width - offset)))
                 {
@@ -253,19 +278,6 @@ public class GunsBoxMapExporter : EditorWindow
                     MapUtils.CreateConfig(exportPath, mapName);
                     MapUtils.Build(scenePath, exportPath, previewPath);
                 }
-
-                if (GUILayout.Button("Build and Run", GUILayout.Height(height), GUILayout.Width(position.width - offset)))
-                {
-                    if (!ValidateFields())
-                        return;
-
-                    if (previewPath != null)
-                        MapUtils.ImporterSettings(previewPath);
-
-                    MapUtils.CreateConfig(exportPath, mapName);
-                    MapUtils.Build(scenePath, exportPath, previewPath, true);
-                }
-                EditorGUILayout.HelpBox("4.1. After assembly you can launch the game to view the map in the lobby", MessageType.Info);
             }
         }
         EditorPrefs.SetBool("buildBool", buildBool);
