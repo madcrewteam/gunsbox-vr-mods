@@ -19,7 +19,7 @@ public class GunsBoxMapExporter : EditorWindow
 
     private Texture2D previewImage;
     private Vector2 scrollPos;
-    private GameObject[] selectedObjects;
+    public GameObject[] selectedObjects;
 
 
     private bool mapNameFoldoutBool = false;
@@ -27,6 +27,7 @@ public class GunsBoxMapExporter : EditorWindow
     private bool buildBool = false;
     private bool teleportAreaBool = false;
     private bool requiredObjectsBool = false;
+    private bool hitSurfaceBool = false;
 
     [MenuItem("GunsBox VR/Map Exporter")]
     public static void ShowMapWindow()
@@ -76,6 +77,10 @@ public class GunsBoxMapExporter : EditorWindow
         MapUtils.DrawUILine(Color.grey);
 
         TeleportAreasSettings();
+
+        MapUtils.DrawUILine(Color.grey);
+
+        HitSurfaceSettings();
 
         MapUtils.DrawUILine(Color.grey);
 
@@ -222,14 +227,66 @@ public class GunsBoxMapExporter : EditorWindow
         EditorPrefs.SetBool("teleportAreaBool", teleportAreaBool);
         EditorGUILayout.EndFoldoutHeaderGroup();
     }
+    private void HitSurfaceSettings()
+    {
+        hitSurfaceBool = EditorGUILayout.BeginFoldoutHeaderGroup(hitSurfaceBool, "Hit Surfaces");
+
+        if (hitSurfaceBool)
+        {
+            EditorGUILayout.HelpBox("Select the objects on which the surface hit effect will be added", MessageType.Info);
+
+            GUILayout.BeginHorizontal();
+            DrawHitSurfaceButton("Wood", GunsBoxHitSurface.SurfaceType.Wood);
+            DrawHitSurfaceButton("Brick", GunsBoxHitSurface.SurfaceType.Brick);
+            GUILayout.EndHorizontal();
+            //------------------------
+            GUILayout.BeginHorizontal();
+            DrawHitSurfaceButton("Concrete", GunsBoxHitSurface.SurfaceType.Concrete);
+            DrawHitSurfaceButton("Metal Thin", GunsBoxHitSurface.SurfaceType.MetalThin);
+            GUILayout.EndHorizontal();
+            //------------------------
+            GUILayout.BeginHorizontal();
+            DrawHitSurfaceButton("Metal Thick", GunsBoxHitSurface.SurfaceType.MetalThick);
+            DrawHitSurfaceButton("Cardboard", GunsBoxHitSurface.SurfaceType.Cardboard);
+            GUILayout.EndHorizontal();
+            //------------------------
+            GUILayout.BeginHorizontal();
+            DrawHitSurfaceButton("Glass", GunsBoxHitSurface.SurfaceType.Glass);
+            DrawHitSurfaceButton("Skin", GunsBoxHitSurface.SurfaceType.Skin);
+            GUILayout.EndHorizontal();
+            //------------------------
+            EditorGUILayout.Space();
+            if (GUILayout.Button("Clear", GUILayout.Height(height), GUILayout.Width(position.width - offset)))
+            {
+                selectedObjects = Selection.gameObjects;
+
+                if (selectedObjects.Length > 0)
+                {
+                    foreach (var selectedObject in selectedObjects)
+                    {
+                        var hittableSurface = selectedObject.GetComponent<GunsBoxHitSurface>();
+
+                        if (hittableSurface != null)
+                        {
+                            Undo.RecordObject(hittableSurface, "Remove surface");
+
+                            DestroyImmediate(hittableSurface);
+                        }
+                    }
+                }
+                else
+                    MapUtils.DisplayError("No selected objects", "Select objects in Hierarchy or Scene View");
+            }
+        }
+        EditorPrefs.SetBool("hitSurfaceBool", hitSurfaceBool);
+        EditorGUILayout.EndFoldoutHeaderGroup();
+    }
     private void ScreenshotsButtons()
     {
         screenshotFoldoutBool = EditorGUILayout.BeginFoldoutHeaderGroup(screenshotFoldoutBool, "Screenshots");
         //Select Image
         if (screenshotFoldoutBool)
         {
-            //EditorGUILayout.HelpBox("Current Icon Path: " + previewPath, MessageType.None);
-
             //Screenshot
             EditorGUILayout.HelpBox("Choose a nice angle in the Scene View and press \"Create screenshot for game\"", MessageType.Info);
 
@@ -237,6 +294,8 @@ public class GunsBoxMapExporter : EditorWindow
             {
                 MapUtils.CreateImageToDisplayInGame(mapName, true);
             }
+
+            EditorGUILayout.Space();
 
             EditorGUILayout.HelpBox("Create screenshots for workshop\nYou will need to add them manually, in Steam itself.", MessageType.Info);
             if (GUILayout.Button("Create screenshots for workshop", GUILayout.Height(height), GUILayout.Width(position.width - offset)))
@@ -261,6 +320,16 @@ public class GunsBoxMapExporter : EditorWindow
         buildBool = EditorGUILayout.BeginFoldoutHeaderGroup(buildBool, "Build");
         if (buildBool)
         {
+            if(string.IsNullOrEmpty(mapName))
+            {
+                EditorGUILayout.HelpBox("Map name is null or empty", MessageType.Warning);
+            }
+
+            if (previewImage == null)
+            {
+                EditorGUILayout.HelpBox("No image preview for map", MessageType.Warning);
+            }
+
             using (new EditorGUI.DisabledScope(string.IsNullOrEmpty(mapName) || previewImage == null))
             {
                 EditorGUILayout.HelpBox("4. Select \"Build\" to create a map. After assembly you can launch the game to view the map in the \"My profile\"", MessageType.Info);
@@ -294,6 +363,37 @@ public class GunsBoxMapExporter : EditorWindow
             EditorUtility.RevealInFinder(basePath + "/");
         }
         GUILayout.EndHorizontal();
+    }
+
+    private void DrawHitSurfaceButton(string buttonName, GunsBoxHitSurface.SurfaceType surfaceType)
+    {
+        if (GUILayout.Button(buttonName, GUILayout.Height(height), GUILayout.Width((position.width - offset) / 2)))
+        {
+            selectedObjects = Selection.gameObjects;
+
+            if (selectedObjects.Length > 0)
+            {
+                foreach (var selectedObject in selectedObjects)
+                {
+                    var hittableSurface = selectedObject.GetComponent<GunsBoxHitSurface>();
+
+                    if(hittableSurface == null)
+                    {
+                        Undo.RecordObject(selectedObject, "Add Surface");
+
+                        hittableSurface = selectedObject.AddComponent<GunsBoxHitSurface>();
+                    }
+
+                    Undo.RecordObject(hittableSurface, "Change Surface");
+
+                    hittableSurface.surfaceType = surfaceType;
+                    EditorUtility.SetDirty(hittableSurface);
+                }
+                
+            }
+            else
+                MapUtils.DisplayError("No selected objects", "Select objects in Hierarchy or Scene View");
+        }
     }
 
     private string AssemblyExportPath()
